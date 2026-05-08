@@ -126,10 +126,32 @@ public class AppointmentService {
     }
 
     //Retrieves appointments by status
-    public List<AppointmentResponseDTO>getAppointmentByStatus(String status){
+    public List<AppointmentResponseDTO> getAppointmentByStatus(String status){
 
         List<Appointment> appointments =
                 appointmentRepository.findByStatus(status);
+
+        return appointments.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    // Retrieve appointments for a specific doctor(Filter by Doctor)
+    public List<AppointmentResponseDTO> getAppointmentsByDoctor(Long doctorId){
+
+        List<Appointment> appointments =
+                appointmentRepository.findByDoctorId(doctorId);
+
+        return appointments.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    //Retrieve appointments for a specific patient(Filter by Patient)
+    public List<AppointmentResponseDTO> getAppointmentsByPatient(Long patientId){
+
+        List<Appointment> appointments =
+                appointmentRepository.findByPatientId(patientId);
 
         return appointments.stream()
                 .map(this::mapToDTO)

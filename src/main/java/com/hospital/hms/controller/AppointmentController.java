@@ -72,4 +72,20 @@ public class AppointmentController {
 
         return appointmentService.getAppointmentByStatus(status);
     }
+
+    //Get(Fetch) by Doctor ID
+    @GetMapping("/doctor/{doctorId}")
+    public List<AppointmentResponseDTO> getAppointmentsByDoctor(@PathVariable
+                                                                @Positive Long doctorId){
+
+        return appointmentService.getAppointmentsByDoctor(doctorId);
+    }
+
+    //Get(Fetch) by Patient ID
+    @GetMapping("/patient/{patientId}")
+    public List<AppointmentResponseDTO> getAppointmentByPatient(@PathVariable
+                                                                @Positive Long patientId){
+
+        return appointmentService.getAppointmentsByPatient(patientId);
+    }
 }
