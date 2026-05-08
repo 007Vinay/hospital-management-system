@@ -124,4 +124,15 @@ public class AppointmentService {
 
         appointmentRepository.delete(appointment);
     }
+
+    //Retrieves appointments by status
+    public List<AppointmentResponseDTO>getAppointmentByStatus(String status){
+
+        List<Appointment> appointments =
+                appointmentRepository.findByStatus(status);
+
+        return appointments.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
 }

@@ -64,4 +64,12 @@ public class AppointmentController {
 
         return "Appointment Deleted Successfully";
     }
+
+    //Get (Fetch) by status
+    @GetMapping("/status/{status}")
+    public List<AppointmentResponseDTO> getAppointmentsByStatus(@PathVariable
+                                                                String status){
+
+        return appointmentService.getAppointmentByStatus(status);
+    }
 }
