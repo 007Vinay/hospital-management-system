@@ -34,7 +34,7 @@ public class AppointmentService {
                                 "Appointment not found with id: "+ id));
     }
 
-    //DTO Response METHOD
+    //DTO Response METHOD for GET by ID
     public AppointmentResponseDTO getAppointmentById(Long id){
         Appointment appointment = getAppointmentEntityById(id);
 
@@ -54,7 +54,7 @@ public class AppointmentService {
 
 
     //Create Appointment
-    public Appointment createAppointment(Long patientId,
+    public AppointmentResponseDTO createAppointment(Long patientId,
                                          Long doctorId,
                                          AppointmentRequestDTO requestDTO){
         Patient patient = patientRepository.findById(patientId)
@@ -76,7 +76,9 @@ public class AppointmentService {
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
 
-        return appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        return mapToDTO(savedAppointment);
     }
 
     // Get All Appointments
@@ -92,7 +94,7 @@ public class AppointmentService {
 
 
     //Update Appointment
-    public Appointment updateAppointment(Long id,
+    public AppointmentResponseDTO updateAppointment(Long id,
                                          AppointmentRequestDTO requestDTO){
         Appointment existingAppointment = getAppointmentEntityById(id);
 
@@ -102,7 +104,10 @@ public class AppointmentService {
         existingAppointment.setStatus(
                 requestDTO.getStatus());
 
-        return appointmentRepository.save(existingAppointment);
+        Appointment updatedAppointment =
+                appointmentRepository.save(existingAppointment);
+
+        return mapToDTO(updatedAppointment);
     }
 
     //Delete Appointment

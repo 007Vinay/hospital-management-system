@@ -22,7 +22,7 @@ public class AppointmentController {
 
     //Create Appointment
     @PostMapping
-    public Appointment createAppointment(
+    public AppointmentResponseDTO createAppointment(
             @RequestParam @Positive Long patientId,
             @RequestParam @Positive Long doctorId,
             @Valid @RequestBody AppointmentRequestDTO requestDTO){
@@ -45,7 +45,7 @@ public class AppointmentController {
 
     //Update Appointment
     @PutMapping("/{id}")
-    public Appointment updateAppointment(@PathVariable @Positive Long id,
+    public AppointmentResponseDTO updateAppointment(@PathVariable @Positive Long id,
                                          @Valid @RequestBody AppointmentRequestDTO requestDTO){
         return appointmentService.updateAppointment(id, requestDTO);
     }
