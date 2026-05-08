@@ -1,5 +1,6 @@
 package com.hospital.hms.controller;
 
+import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
 import com.hospital.hms.service.AppointmentService;
@@ -24,10 +25,10 @@ public class AppointmentController {
     public Appointment createAppointment(
             @RequestParam @Positive Long patientId,
             @RequestParam @Positive Long doctorId,
-            @Valid @RequestBody Appointment appointment){
+            @Valid @RequestBody AppointmentRequestDTO requestDTO){
 
         return appointmentService.createAppointment(
-                patientId, doctorId, appointment);
+                patientId, doctorId, requestDTO);
     }
 
     //Get All Appointments

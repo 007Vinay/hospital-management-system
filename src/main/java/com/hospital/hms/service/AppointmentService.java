@@ -1,5 +1,6 @@
 package com.hospital.hms.service;
 
+import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
 import com.hospital.hms.entity.Doctor;
@@ -55,8 +56,7 @@ public class AppointmentService {
     //Create Appointment
     public Appointment createAppointment(Long patientId,
                                          Long doctorId,
-                                         Appointment appointment){
-
+                                         AppointmentRequestDTO requestDTO){
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Patient not found with id: "+ patientId));
@@ -64,6 +64,14 @@ public class AppointmentService {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Doctor not found with id: "+ doctorId));
+
+        Appointment appointment = new Appointment();
+
+        appointment.setAppointmentDate(
+                requestDTO.getAppointmentDate());
+
+        appointment.setStatus(
+                requestDTO.getStatus());
 
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
