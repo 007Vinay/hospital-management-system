@@ -1,5 +1,6 @@
 package com.hospital.hms.service;
 
+import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
 import com.hospital.hms.entity.Doctor;
 import com.hospital.hms.entity.Patient;
@@ -23,6 +24,33 @@ public class AppointmentService {
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    //Internal Entity METHOD
+    private Appointment getAppointmentEntityById(Long id){
+        return appointmentRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Appointment not found with id: "+ id));
+    }
+
+    //DTO Response METHOD
+    public AppointmentResponseDTO getAppointmentById(Long id){
+        Appointment appointment = getAppointmentEntityById(id);
+
+        return mapToDTO(appointment);
+    }
+
+    //Helper Method for Convert Entity -> DTO (GET)
+    private AppointmentResponseDTO mapToDTO(Appointment appointment){
+        return new AppointmentResponseDTO(
+                appointment.getId(),
+                appointment.getAppointmentDate(),
+                appointment.getStatus(),
+                appointment.getPatient().getName(),
+                appointment.getDoctor().getName()
+        );
+    }
+
 
     //Create Appointment
     public Appointment createAppointment(Long patientId,
@@ -48,15 +76,11 @@ public class AppointmentService {
         return appointmentRepository.findAll();
     }
 
-    //Get Appointment By ID
-    public Appointment getAppointmentById(Long id){
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Appointment not found with id: "+ id));
-    }
+
+    //Update Appointment
     public Appointment updateAppointment(Long id,
                                          Appointment updateAppointment){
-        Appointment existingAppointment = getAppointmentById(id);
+        Appointment existingAppointment = getAppointmentEntityById(id);
 
         existingAppointment.setAppointmentDate(
                 updateAppointment.getAppointmentDate());
@@ -69,7 +93,7 @@ public class AppointmentService {
 
     //Delete Appointment
     public void deleteAppointment(Long id){
-        Appointment appointment = getAppointmentById(id);
+        Appointment appointment = getAppointmentEntityById(id);
 
         appointmentRepository.delete(appointment);
     }

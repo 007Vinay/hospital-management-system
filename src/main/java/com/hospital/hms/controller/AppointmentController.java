@@ -1,5 +1,6 @@
 package com.hospital.hms.controller;
 
+import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
 import com.hospital.hms.service.AppointmentService;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class AppointmentController {
 
     //Get Appointment By ID
     @GetMapping("/{id}")
-    public Appointment getAppointmentById(@PathVariable Long id){
+    public AppointmentResponseDTO getAppointmentById(@PathVariable Long id){
         return appointmentService.getAppointmentById(id);
     }
 
