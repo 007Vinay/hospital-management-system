@@ -7,6 +7,7 @@ import com.hospital.hms.service.AppointmentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,14 @@ public class AppointmentController {
 
     //Get All Appointments
     @GetMapping
-    public List<AppointmentResponseDTO> getAllAppointments(){
-        return appointmentService.getAllAppointments();
+    public Page<AppointmentResponseDTO> getAllAppointments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "appointmentDate")
+            String sortBy){
+
+        return appointmentService.getAllAppointments(
+                page, size, sortBy);
     }
 
     //Get Appointment By ID
