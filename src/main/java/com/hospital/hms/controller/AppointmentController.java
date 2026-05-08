@@ -46,8 +46,8 @@ public class AppointmentController {
     //Update Appointment
     @PutMapping("/{id}")
     public Appointment updateAppointment(@PathVariable @Positive Long id,
-                                         @Valid @RequestBody Appointment appointment){
-        return appointmentService.updateAppointment(id, appointment);
+                                         @Valid @RequestBody AppointmentRequestDTO requestDTO){
+        return appointmentService.updateAppointment(id, requestDTO);
     }
 
     //Delete Appointment

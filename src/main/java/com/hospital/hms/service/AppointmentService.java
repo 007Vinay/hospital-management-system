@@ -87,14 +87,14 @@ public class AppointmentService {
 
     //Update Appointment
     public Appointment updateAppointment(Long id,
-                                         Appointment updateAppointment){
+                                         AppointmentRequestDTO requestDTO){
         Appointment existingAppointment = getAppointmentEntityById(id);
 
         existingAppointment.setAppointmentDate(
-                updateAppointment.getAppointmentDate());
+                requestDTO.getAppointmentDate());
 
         existingAppointment.setStatus(
-                updateAppointment.getStatus());
+                requestDTO.getStatus());
 
         return appointmentRepository.save(existingAppointment);
     }
