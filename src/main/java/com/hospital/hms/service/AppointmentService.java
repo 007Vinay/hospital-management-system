@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -152,6 +153,18 @@ public class AppointmentService {
 
         List<Appointment> appointments =
                 appointmentRepository.findByPatientId(patientId);
+
+        return appointments.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    // Retrieve appointments within the specified date range
+    public List<AppointmentResponseDTO> getAppointmentsBetweenDates(
+            LocalDateTime startDate, LocalDateTime endDate){
+
+        List<Appointment> appointments = appointmentRepository.findAppointmentsBetweenDates(
+                startDate, endDate);
 
         return appointments.stream()
                 .map(this::mapToDTO)

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Validated
@@ -87,5 +88,14 @@ public class AppointmentController {
                                                                 @Positive Long patientId){
 
         return appointmentService.getAppointmentsByPatient(patientId);
+    }
+
+    // Get appointments within a date range
+    @GetMapping("/date-range")
+    public List<AppointmentResponseDTO> getAppointmentsBetweenDates(
+            @RequestParam LocalDateTime startDate,
+            @RequestParam LocalDateTime endDate){
+
+        return appointmentService.getAppointmentsBetweenDates(startDate, endDate);
     }
 }
