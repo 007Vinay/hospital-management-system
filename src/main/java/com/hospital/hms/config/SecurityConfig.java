@@ -1,6 +1,8 @@
 package com.hospital.hms.config;
 
-
+import com.hospital.hms.security.JwtAuthenticationFilter;
+import com.hospital.hms.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,9 +14,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+
+    //JWT Authentication Filter Bean
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            JwtUtil jwtUtil,
+            InMemoryUserDetailsManager userDetailsService){
+
+        return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
+    }
 
     //Password Encoder Bean
     @Bean
@@ -50,10 +63,18 @@ public class SecurityConfig {
 
     //Security Configuration for Rest APIs
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception{
         http
                 //Disable CSRF for REST APIs
                 .csrf(csrf -> csrf.disable())
+
+                //Stateless session for JWT
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS))
 
                 //Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
@@ -77,9 +98,12 @@ public class SecurityConfig {
                         //Any other request requires authentication
                         .anyRequest()
                         .authenticated()
-                )
-                //Enable Basic Authentication
-                .httpBasic(httpBasic -> {});
+                );
+
+        //Add JWT filter before Spring authentication filter
+        http.addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
