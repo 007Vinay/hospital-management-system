@@ -25,17 +25,25 @@ public class SecurityConfig {
     public InMemoryUserDetailsManager userDetailsService(
             PasswordEncoder passwordEncoder){
 
+        //Admin User
         UserDetails admin = User.builder()
                 .username("admin")
-
-                // Encrypt password Using BCrypt
                 .password(
                         passwordEncoder.encode("admin123"))
 
                 .roles("ADMIN")
                 .build();
 
-        return new InMemoryUserDetailsManager(admin);
+        //Doctor User
+        UserDetails doctor = User.builder()
+                .username("doctor")
+                .password(
+                        passwordEncoder.encode("doctor123"))
+
+                .roles("DOCTOR")
+                .build();
+
+        return new InMemoryUserDetailsManager(admin, doctor);
     }
 
     //Security Configuration for Rest APIs
@@ -48,7 +56,19 @@ public class SecurityConfig {
                 //Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
 
-                        //All requests require authentication
+                        //Only ADMIN can access doctor APIs
+                        .requestMatchers("/doctors/**")
+                        .hasRole("ADMIN")
+
+                        //ADMIN and DOCTOR both can access appointments
+                        .requestMatchers("/appointments/**")
+                        .hasAnyRole("ADMIN", "DOCTOR")
+
+                        //Any authenticated user can access patients
+                        .requestMatchers("/patients/**")
+                        .authenticated()
+
+                        //Any other request requires authentication
                                 .anyRequest().authenticated()
                 )
                 //Enable Basic Authentication
