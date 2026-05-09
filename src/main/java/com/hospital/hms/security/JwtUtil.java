@@ -1,0 +1,85 @@
+package com.hospital.hms.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import io.jsonwebtoken.security.Keys;
+
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    // Secret key for signing JWT
+    private final SecretKey SECRET_KEY =
+            Keys.secretKeyFor(
+                    SignatureAlgorithm.HS256);
+
+    // Generate JWT token
+    public String generateToken(String username){
+
+        return Jwts.builder()
+
+                .subject(username)
+
+                .issuedAt(new Date())
+
+                // Token valid for 1 day
+                .expiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + 1000 * 60 * 60 * 24))
+
+                .signWith(
+                        SECRET_KEY)
+
+                .compact();
+    }
+
+    // Extract username from token
+    public String extractUsername(String token){
+
+        return extractClaims(token)
+                .getSubject();
+    }
+
+    // Validate token username
+    public boolean validateToken(
+            String token,
+            String username){
+
+        String extractedUsername =
+                extractUsername(token);
+
+        return extractedUsername
+                .equals(username)
+
+                && !isTokenExpired(token);
+    }
+
+    // Check token expiration
+    private boolean isTokenExpired(String token){
+
+        return extractClaims(token)
+                .getExpiration()
+                .before(new Date());
+    }
+
+    // Extract all JWT claims
+    private Claims extractClaims(String token){
+
+        return Jwts.parser()
+
+                .verifyWith(SECRET_KEY)
+
+                .build()
+
+                .parseSignedClaims(token)
+
+                .getPayload();
+    }
+}
