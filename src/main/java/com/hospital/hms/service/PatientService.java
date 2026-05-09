@@ -1,5 +1,7 @@
 package com.hospital.hms.service;
 
+import com.hospital.hms.dto.PatientRequestDTO;
+import com.hospital.hms.dto.PatientResponseDTO;
 import com.hospital.hms.entity.Patient;
 import com.hospital.hms.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,44 +16,76 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    //Save Patient
-    public Patient savePatient(Patient patient){
-        return patientRepository.save(patient);
-    }
-
-    //Get all patients
-    public List<Patient> getAllPatients(){
-        return patientRepository.findAll();
-    }
-
-    //Get Patient by ID
-    public Patient getPatientById(Long id) {
+    //Internal Entity Method
+    private Patient getPatientEntityById(Long id){
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Patient not found with id: "+ id));
     }
 
-    //Get Patient by Name
-    public List<Patient> getPatientsByName(String name){
-        return patientRepository.findByName(name);
+    //Helper Method (Convert Entity -> ResponseDTO)
+    private PatientResponseDTO mapToDTO(Patient patient){
+        return new PatientResponseDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getPhone(),
+                patient.getAge(),
+                patient.getDisease(),
+                patient.getGender()
+        );
     }
 
-    //Update Patients
-    public Patient updatePatient(Long id, Patient patient){
-        Patient existingPatient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: "+ id));
+    //Create new Patient and return PatientResponseDTO after saving
+    public PatientResponseDTO createPatient(PatientRequestDTO requestDTO){
+        Patient patient = new Patient();
 
-    existingPatient.setName(patient.getName());
-    existingPatient.setAge(patient.getAge());
-    existingPatient.setDisease(patient.getDisease());
-    existingPatient.setGender(patient.getGender());
+        patient.setName(requestDTO.getName());
+        patient.setPhone(requestDTO.getPhone());
+        patient.setAge(requestDTO.getAge());
+        patient.setDisease(requestDTO.getDisease());
+        patient.setGender(requestDTO.getGender());
 
-    return patientRepository.save(existingPatient);
+        Patient savedPatient = patientRepository.save(patient);
+
+        return mapToDTO(savedPatient);
     }
 
-    //Delete Patient by ID
+    //Retrieve all patients from database and map each entity to PatientResponseDTO
+    public List<PatientResponseDTO> getAllPatients(){
+        return patientRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    //Retrieve Patient from database by ID, then map entity to PatientResponseDTO
+    public PatientResponseDTO getPatientById(Long id) {
+        Patient patient = getPatientEntityById(id);
+
+        return mapToDTO(patient);
+    }
+
+    //Fetch existing Patient, update fields from request DTO, save changes, and return response DTO
+    public PatientResponseDTO updatePatient(Long id, PatientRequestDTO requestDTO){
+        Patient existingPatient = getPatientEntityById(id);
+
+        existingPatient.setName(requestDTO.getName());
+        existingPatient.setPhone(requestDTO.getPhone());
+        existingPatient.setAge(requestDTO.getAge());
+        existingPatient.setDisease(requestDTO.getDisease());
+        existingPatient.setGender(requestDTO.getGender());
+
+        Patient updatedPatient = patientRepository.save(existingPatient);
+
+        return mapToDTO(updatedPatient);
+    }
+
+    //Retrieve Patient entity by ID and remove it from repository
     public void deletePatient(Long id){
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: "+ id));
+        Patient patient = getPatientEntityById(id);
+
         patientRepository.delete(patient);
     }
+
+
 }

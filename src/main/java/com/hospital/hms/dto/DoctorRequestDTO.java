@@ -1,22 +1,9 @@
-package com.hospital.hms.entity;
+package com.hospital.hms.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.List;
-
-@Entity
-public class Doctor {
-
-    @OneToMany(mappedBy = "doctor")
-    @JsonIgnore
-    private List<Appointment> appointments;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class DoctorRequestDTO {
 
     @NotBlank(message = "Doctor name is required")
     private String name;
@@ -34,10 +21,17 @@ public class Doctor {
 
     private String specialization;
 
-    public Doctor() {
+    // Default Constructor
+    public DoctorRequestDTO() {
     }
 
-    public Doctor(String name, String gender, String email, String qualification, int experienceYears, String specialization) {
+    // Parameterized Constructor
+    public DoctorRequestDTO(String name,
+                            String gender,
+                            String email,
+                            String qualification,
+                            int experienceYears,
+                            String specialization) {
         this.name = name;
         this.gender = gender;
         this.email = email;
@@ -46,14 +40,7 @@ public class Doctor {
         this.specialization = specialization;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -101,5 +88,4 @@ public class Doctor {
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
     }
-
 }

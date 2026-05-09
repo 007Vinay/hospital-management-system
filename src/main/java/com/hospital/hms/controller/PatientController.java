@@ -1,5 +1,7 @@
 package com.hospital.hms.controller;
 
+import com.hospital.hms.dto.PatientRequestDTO;
+import com.hospital.hms.dto.PatientResponseDTO;
 import com.hospital.hms.entity.Patient;
 import com.hospital.hms.service.PatientService;
 import jakarta.validation.Valid;
@@ -17,29 +19,33 @@ public class PatientController {
 
     //Create Patient
     @PostMapping
-    public Patient createPatient(@Valid @RequestBody Patient patient){
-        return patientService.savePatient(patient);
+    public PatientResponseDTO createPatient(
+            @Valid
+            @RequestBody PatientRequestDTO requestDTO){
+        return patientService.createPatient(requestDTO);
     }
 
     //Get all Patients
     @GetMapping
-    public List<Patient> getAllPatients(){
+    public List<PatientResponseDTO> getAllPatients(){
         return patientService.getAllPatients();
     }
 
-    //Get patient by ID
+    //Get Patient by ID
     @GetMapping("/{id}")
-    public Patient getPatientById(@PathVariable Long id){
+    public PatientResponseDTO getPatientById(@PathVariable Long id){
         return patientService.getPatientById(id);
     }
 
-    //Update Patients
+    //Update Patient
     @PutMapping("/{id}")
-    public Patient updatePatient(@PathVariable Long id, @Valid @RequestBody Patient patient){
-        return patientService.updatePatient(id, patient);
+    public PatientResponseDTO updatePatient(
+            @PathVariable Long id,
+            @Valid @RequestBody PatientRequestDTO requestDTO){
+        return patientService.updatePatient(id, requestDTO);
     }
 
-    //Delete patient by Id
+    //Delete Patient by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePatient(@PathVariable Long id){
         patientService.deletePatient(id);

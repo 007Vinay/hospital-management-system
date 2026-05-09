@@ -1,40 +1,33 @@
-package com.hospital.hms.entity;
+package com.hospital.hms.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
-import java.util.List;
-
-@Entity
-public class Patient {
-
-    @OneToMany(mappedBy = "patient")
-    @JsonIgnore
-    private List<Appointment> appointments;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PatientRequestDTO {
 
     @NotBlank(message = "Name is required")
     private String name;
 
-    @Pattern(regexp = "^[0-9]{10}$", message = "Phone Number must be 10 digits")
-    @Column(nullable = false, unique = true)
+    @Pattern(
+            regexp = "^[0-9]{10}$",
+            message = "Phone Number must be 10 digits")
     private String phone;
 
-    @Min(value = 0, message = "Age must be positive")
+    @Min(value = 0,
+            message = "Age must be positive")
     private int age;
+
     private String disease;
 
     @NotBlank(message = "Gender is required")
     private String gender;
 
-    public Patient(){
-
+    //Constructor
+    public PatientRequestDTO() {
     }
-    public Patient(String name, String phone, int age, String disease, String gender) {
+
+    public PatientRequestDTO(String name, String phone, int age, String disease, String gender) {
         this.name = name;
         this.phone = phone;
         this.age = age;
@@ -42,15 +35,7 @@ public class Patient {
         this.gender = gender;
     }
 
-    //Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    //Getter and Setter
     public String getName() {
         return name;
     }
@@ -90,6 +75,4 @@ public class Patient {
     public void setGender(String gender) {
         this.gender = gender;
     }
-
-
 }

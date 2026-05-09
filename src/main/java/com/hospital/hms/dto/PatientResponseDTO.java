@@ -1,40 +1,26 @@
-package com.hospital.hms.entity;
+package com.hospital.hms.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+public class PatientResponseDTO {
 
-import java.util.List;
-
-@Entity
-public class Patient {
-
-    @OneToMany(mappedBy = "patient")
-    @JsonIgnore
-    private List<Appointment> appointments;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
     private String name;
 
-    @Pattern(regexp = "^[0-9]{10}$", message = "Phone Number must be 10 digits")
-    @Column(nullable = false, unique = true)
     private String phone;
 
-    @Min(value = 0, message = "Age must be positive")
     private int age;
+
     private String disease;
 
-    @NotBlank(message = "Gender is required")
     private String gender;
 
-    public Patient(){
-
+    public PatientResponseDTO() {
     }
-    public Patient(String name, String phone, int age, String disease, String gender) {
+
+    public PatientResponseDTO(Long id, String name, String phone, int age,
+            String disease, String gender) {
+
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.age = age;
@@ -42,7 +28,6 @@ public class Patient {
         this.gender = gender;
     }
 
-    //Getters and Setters
     public Long getId() {
         return id;
     }
@@ -90,6 +75,4 @@ public class Patient {
     public void setGender(String gender) {
         this.gender = gender;
     }
-
-
 }
