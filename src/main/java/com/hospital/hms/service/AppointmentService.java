@@ -170,4 +170,16 @@ public class AppointmentService {
                 .map(this::mapToDTO)
                 .toList();
     }
+
+    // Handles filtered appointment search with pageable response and DTO mapping
+    public Page<AppointmentResponseDTO> searchAppointments(String status, Long doctorId,
+                                                           Long patientId, int page, int size, String sortBy){
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        Page<Appointment> appointments = appointmentRepository.searchAppointments(
+                status, doctorId, patientId, pageable);
+
+        return appointments.map(this::mapToDTO);
+    }
 }

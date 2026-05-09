@@ -98,4 +98,28 @@ public class AppointmentController {
 
         return appointmentService.getAppointmentsBetweenDates(startDate, endDate);
     }
+
+    //Search Appointments with Filters
+    @GetMapping("/search")
+    public Page<AppointmentResponseDTO> searchAppointments(
+            @RequestParam(required = false)
+            String status,
+
+            @RequestParam(required = false)
+            Long doctorId,
+
+            @RequestParam(required = false)
+            Long patientId,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "5")
+            int size,
+            @RequestParam(defaultValue = "appointmentDate")
+            String sortBy){
+
+        return appointmentService.searchAppointments(
+                status, doctorId, patientId, page, size, sortBy);
+    }
 }
