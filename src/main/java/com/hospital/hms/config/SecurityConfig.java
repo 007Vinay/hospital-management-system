@@ -3,6 +3,8 @@ package com.hospital.hms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +58,10 @@ public class SecurityConfig {
                 //Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
 
+                        //Public login API
+                        .requestMatchers("/auth/**")
+                        .permitAll()
+
                         //Only ADMIN can access doctor APIs
                         .requestMatchers("/doctors/**")
                         .hasRole("ADMIN")
@@ -69,11 +75,21 @@ public class SecurityConfig {
                         .authenticated()
 
                         //Any other request requires authentication
-                                .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
                 //Enable Basic Authentication
                 .httpBasic(httpBasic -> {});
 
         return http.build();
+    }
+
+    //Authentication Manager Bean
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config)
+        throws Exception{
+
+        return config.getAuthenticationManager();
     }
 }
