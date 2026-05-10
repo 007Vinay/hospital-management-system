@@ -16,12 +16,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class AppointmentService {
+
+    //Logger for AppointmentService
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentService.class);
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -40,13 +45,6 @@ public class AppointmentService {
                                 "Appointment not found with id: "+ id));
     }
 
-    //DTO Response METHOD for GET by ID
-    public AppointmentResponseDTO getAppointmentById(Long id){
-        Appointment appointment = getAppointmentEntityById(id);
-
-        return mapToDTO(appointment);
-    }
-
     //Helper Method for Convert Entity -> DTO (GET)
     private AppointmentResponseDTO mapToDTO(Appointment appointment){
         return new AppointmentResponseDTO(
@@ -58,8 +56,7 @@ public class AppointmentService {
         );
     }
 
-
-    //Create Appointment
+    //Create new appointment for the specified patient and doctor
     public AppointmentResponseDTO createAppointment(Long patientId,
                                          Long doctorId,
                                          AppointmentRequestDTO requestDTO){
@@ -84,10 +81,12 @@ public class AppointmentService {
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
+        logger.info("Appointment created with ID: {}", savedAppointment.getId());
+
         return mapToDTO(savedAppointment);
     }
 
-    // Get All Appointments
+    // Retrieves all appointments and converts them into a list of AppointmentResponseDTO objects.
     public Page<AppointmentResponseDTO> getAllAppointments(
             int page,
             int size,
@@ -98,11 +97,22 @@ public class AppointmentService {
         Page<Appointment> appointmentPage =
                 appointmentRepository.findAll(pageable);
 
+        logger.info("Fetching all appointments");
+
         return appointmentPage.map(this::mapToDTO);
     }
 
+    // Retrieve appointment by its ID and returns the mapped response DTO
+    public AppointmentResponseDTO getAppointmentById(Long id){
+        Appointment appointment = getAppointmentEntityById(id);
 
-    //Update Appointment
+        logger.info("Fetching appointment with ID: {}", id);
+
+        return mapToDTO(appointment);
+    }
+
+
+    //Update existing appointment using the provided appointment ID
     public AppointmentResponseDTO updateAppointment(Long id,
                                          AppointmentRequestDTO requestDTO){
         Appointment existingAppointment = getAppointmentEntityById(id);
@@ -116,12 +126,17 @@ public class AppointmentService {
         Appointment updatedAppointment =
                 appointmentRepository.save(existingAppointment);
 
+        logger.info("Appointment updated with ID: {}",
+                updatedAppointment.getId());
+
         return mapToDTO(updatedAppointment);
     }
 
-    //Delete Appointment
+    //Delete appointment by its ID
     public void deleteAppointment(Long id){
         Appointment appointment = getAppointmentEntityById(id);
+
+        logger.info("Deleting appointment with ID: {}", id);
 
         appointmentRepository.delete(appointment);
     }
@@ -131,6 +146,8 @@ public class AppointmentService {
 
         List<Appointment> appointments =
                 appointmentRepository.findByStatus(status);
+
+        logger.info("Filtering appointments by status: {}", status);
 
         return appointments.stream()
                 .map(this::mapToDTO)
@@ -143,6 +160,7 @@ public class AppointmentService {
         List<Appointment> appointments =
                 appointmentRepository.findByDoctorId(doctorId);
 
+        logger.info("Filtering appointments for doctor ID: {}", doctorId);
         return appointments.stream()
                 .map(this::mapToDTO)
                 .toList();
@@ -153,6 +171,8 @@ public class AppointmentService {
 
         List<Appointment> appointments =
                 appointmentRepository.findByPatientId(patientId);
+
+        logger.info("Filtering appointments for patient ID: {}", patientId);
 
         return appointments.stream()
                 .map(this::mapToDTO)
@@ -165,6 +185,9 @@ public class AppointmentService {
 
         List<Appointment> appointments = appointmentRepository.findAppointmentsBetweenDates(
                 startDate, endDate);
+
+        logger.info("Filtering appointments between " +
+                "{} and {}", startDate, endDate);
 
         return appointments.stream()
                 .map(this::mapToDTO)
@@ -179,6 +202,9 @@ public class AppointmentService {
 
         Page<Appointment> appointments = appointmentRepository.searchAppointments(
                 status, doctorId, patientId, pageable);
+
+        logger.info("Filtering paginated appointments | " +
+                "page: {}, size: {}, sortBy: {}", page, size, sortBy);
 
         return appointments.map(this::mapToDTO);
     }

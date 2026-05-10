@@ -4,14 +4,20 @@ import com.hospital.hms.dto.PatientRequestDTO;
 import com.hospital.hms.dto.PatientResponseDTO;
 import com.hospital.hms.entity.Patient;
 import com.hospital.hms.repository.PatientRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.hospital.hms.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Service
 public class PatientService {
+
+    //Logger for PatientService
+    private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
 
     @Autowired
     private PatientRepository patientRepository;
@@ -48,11 +54,17 @@ public class PatientService {
 
         Patient savedPatient = patientRepository.save(patient);
 
+        logger.info("Patient created with ID: {}",
+                savedPatient.getId());
+
         return mapToDTO(savedPatient);
     }
 
     //Retrieve all patients from database and map each entity to PatientResponseDTO
     public List<PatientResponseDTO> getAllPatients(){
+
+        logger.info("Fetching all patients");
+
         return patientRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .toList();
@@ -62,6 +74,7 @@ public class PatientService {
     public PatientResponseDTO getPatientById(Long id) {
         Patient patient = getPatientEntityById(id);
 
+        logger.info("Fetching patient with ID: {}", id);
         return mapToDTO(patient);
     }
 
@@ -77,6 +90,8 @@ public class PatientService {
 
         Patient updatedPatient = patientRepository.save(existingPatient);
 
+        logger.info("Patient updated with ID: {}", updatedPatient.getId());
+
         return mapToDTO(updatedPatient);
     }
 
@@ -84,8 +99,9 @@ public class PatientService {
     public void deletePatient(Long id){
         Patient patient = getPatientEntityById(id);
 
+        logger.info("Deleting patient with ID: {}", id);
+
         patientRepository.delete(patient);
     }
-
 
 }
