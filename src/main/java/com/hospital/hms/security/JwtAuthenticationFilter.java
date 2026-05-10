@@ -1,5 +1,7 @@
 package com.hospital.hms.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,9 +13,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    //Logger for JWT Authentication Filter
+    private static final Logger logger = LoggerFactory
+            .getLogger(JwtAuthenticationFilter.class);
 
     private final JwtUtil jwtUtil;
 
@@ -47,8 +55,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             jwtToken = authHeader.substring(7);
 
+            try {
+
             //Extract username from token
             username = jwtUtil.extractUsername(jwtToken);
+
+            }catch (ExpiredJwtException e) {
+
+            logger.warn("Expired JWT token received");
+
+            }catch (JwtException e) {
+
+                logger.warn("Invalid JWT token received");
+            }
+
+        } else {
+
+            logger.info("No JWT token found in request");
         }
 
         //Authenticate only if user not already authenticated
@@ -61,6 +84,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //Validate token
             if(jwtUtil.validateToken(jwtToken,
                     userDetails.getUsername())){
+
+                logger.info("JWT token validated successfully for user: {}",
+                        username);
 
                 UsernamePasswordAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(
