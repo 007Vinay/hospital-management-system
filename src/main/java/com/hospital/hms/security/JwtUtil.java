@@ -2,10 +2,8 @@ package com.hospital.hms.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 import io.jsonwebtoken.security.Keys;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -14,10 +12,13 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Secret key for signing JWT
-    private final SecretKey SECRET_KEY =
-            Keys.secretKeyFor(
-                    SignatureAlgorithm.HS256);
+    //JWT Secret from application.properties
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    //JWT Expiration from application.properties
+    @Value("${jwt.expiration}")
+    private long expirationTime;
 
     // Generate JWT token
     public String generateToken(String username){
@@ -32,10 +33,11 @@ public class JwtUtil {
                 .expiration(
                         new Date(
                                 System.currentTimeMillis()
-                                        + 1000 * 60 * 60 * 24))
+                                        + expirationTime))
 
                 .signWith(
-                        SECRET_KEY)
+                        getSigningKey()
+                )
 
                 .compact();
     }
@@ -70,16 +72,24 @@ public class JwtUtil {
     }
 
     // Extract all JWT claims
-    private Claims extractClaims(String token){
+    private Claims extractClaims(String token) {
 
         return Jwts.parser()
 
-                .verifyWith(SECRET_KEY)
+                .verifyWith(getSigningKey())
 
                 .build()
 
                 .parseSignedClaims(token)
 
                 .getPayload();
+    }
+        //Generate signing key from secret (Helper Method)
+        private SecretKey getSigningKey(){
+
+            return Keys.hmacShaKeyFor(
+                    secretKey.getBytes()
+            );
+
     }
 }
