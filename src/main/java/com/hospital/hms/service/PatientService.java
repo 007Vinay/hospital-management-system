@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.hospital.hms.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -103,5 +102,22 @@ public class PatientService {
 
         patientRepository.delete(patient);
     }
+
+    // Retrieve Patient By Phone
+    public PatientResponseDTO getPatientByPhone(String phone) {
+
+        logger.info("Searching patient with phone: {}", phone);
+
+        Patient patient = patientRepository.findByPhone(phone)
+                .orElseThrow(() -> {
+                    logger.error("Patient not found with phone: {}", phone);
+                    return new ResourceNotFoundException("Patient not found");
+                });
+
+        logger.info("Patient found successfully with phone: {}", phone);
+
+        return mapToDTO(patient);
+    }
+
 
 }

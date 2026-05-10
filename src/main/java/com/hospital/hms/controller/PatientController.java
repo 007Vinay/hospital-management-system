@@ -2,7 +2,6 @@ package com.hospital.hms.controller;
 
 import com.hospital.hms.dto.PatientRequestDTO;
 import com.hospital.hms.dto.PatientResponseDTO;
-import com.hospital.hms.entity.Patient;
 import com.hospital.hms.service.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +50,13 @@ public class PatientController {
         patientService.deletePatient(id);
         return ResponseEntity.ok("Patient Deleted Successfully");
     }
+
+    // Get Patient By Phone
+    @GetMapping("/phone/{phone}")
+    public PatientResponseDTO getPatientByPhone(@PathVariable
+                                                    String phone){
+
+        return patientService.getPatientByPhone(phone);
+    }
+
 }
