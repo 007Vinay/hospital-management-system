@@ -52,7 +52,8 @@ public class AuthController {
 
             //Return token in response
             return ResponseEntity.ok(
-                    new LoginResponse(token));
+                    new LoginResponse(token,
+                            request.getUsername()));
 
         } catch(BadCredentialsException ex){
 
