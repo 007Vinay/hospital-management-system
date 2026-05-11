@@ -15,6 +15,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -60,6 +63,28 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(admin, doctor);
     }
 
+    //CORS Configuration
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+
+        configuration.addAllowedMethod("*");
+
+        configuration.addAllowedHeader("*");
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new
+                UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
     //Security Configuration for Rest APIs
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -69,6 +94,8 @@ public class SecurityConfig {
         http
                 //Disable CSRF for REST APIs
                 .csrf(csrf -> csrf.disable())
+
+                .cors(cors -> {})
 
                 //Stateless session for JWT
                 .sessionManagement(session ->
