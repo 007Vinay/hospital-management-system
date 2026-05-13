@@ -50,10 +50,16 @@ public class AuthController {
 
             logger.info("User logged in successfully: {}", request.getUsername());
 
+            String role = authentication
+                    .getAuthorities()
+                    .iterator()
+                    .next()
+                    .getAuthority();
+
             //Return token in response
             return ResponseEntity.ok(
                     new LoginResponse(token,
-                            request.getUsername()));
+                            request.getUsername(), role));
 
         } catch(BadCredentialsException ex){
 
