@@ -20,9 +20,6 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
-    @Autowired
-    private PatientRepository patientRepository;
-
     //Create Patient
     @PostMapping
     public PatientResponseDTO createPatient(
@@ -66,19 +63,23 @@ public class PatientController {
         return patientService.getPatientByPhone(phone);
     }
 
-    //Get Patient by Username
+    //Get profile details of currently logged-in patient
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(Authentication authentication) {
+
+        //Extract username from authenticated JWT user
         String username = authentication.getName();
 
-        Optional<Patient> patient = patientRepository
-                        .findByUserUsername(username);
+        //Fetch patient profile from service layer
+        Optional<Patient> patient = patientService.getMyProfile(username);
 
+        //Return error if patient profile not found
         if (patient.isEmpty()) {
-            return ResponseEntity.badRequest()
-                    .body("Patient not found");
+
+            return ResponseEntity.badRequest().body("Patient not found");
         }
 
+        //Return authenticated patient profile
         return ResponseEntity.ok(patient.get());
     }
 

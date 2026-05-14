@@ -6,6 +6,7 @@ import com.hospital.hms.entity.Patient;
 import com.hospital.hms.repository.PatientRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.hospital.hms.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -117,6 +118,14 @@ public class PatientService {
         logger.info("Patient found successfully with phone: {}", phone);
 
         return mapToDTO(patient);
+    }
+
+    //Fetch profile of currently authenticated patient
+    public Optional<Patient> getMyProfile(String username) {
+
+        logger.info("Fetching profile for patient username: {}", username);
+
+        return patientRepository.findByUserUsername(username);
     }
 
 

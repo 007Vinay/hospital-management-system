@@ -3,6 +3,8 @@ package com.hospital.hms.controller;
 import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import com.hospital.hms.service.AppointmentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -121,5 +123,21 @@ public class AppointmentController {
 
         return appointmentService.searchAppointments(
                 status, doctorId, patientId, page, size, sortBy);
+    }
+
+    //Get appointments of currently logged-in patient
+    @GetMapping("/my-appointments")
+    public ResponseEntity<List<Appointment>> getMyAppointments(
+            Authentication authentication) {
+
+        //Extract username from authenticated JWT user
+        String username = authentication.getName();
+
+        //Fetch appointments from service layer
+        List<Appointment> appointments = appointmentService
+                        .getMyAppointments(username);
+
+        //Return appointments of authenticated patient
+        return ResponseEntity.ok(appointments);
     }
 }

@@ -208,4 +208,12 @@ public class AppointmentService {
 
         return appointments.map(this::mapToDTO);
     }
+
+    //Fetch appointments of currently authenticated patient
+    public List<Appointment> getMyAppointments(String username) {
+
+        logger.info("Fetching appointments for patient username: {}", username);
+
+        return appointmentRepository.findByPatientUserUsername(username);
+    }
 }
