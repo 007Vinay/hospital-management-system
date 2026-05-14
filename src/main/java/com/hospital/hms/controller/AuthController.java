@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.hospital.hms.entity.User;
+import com.hospital.hms.repository.UserRepository;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,6 +30,9 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //Login API
     @PostMapping("/login")
@@ -50,6 +55,10 @@ public class AuthController {
 
             logger.info("User logged in successfully: {}", request.getUsername());
 
+            User user = userRepository.findByUsername(
+                    request.getUsername())
+                    .orElseThrow();
+
             String role = authentication
                     .getAuthorities()
                     .iterator()
@@ -59,7 +68,8 @@ public class AuthController {
             //Return token in response
             return ResponseEntity.ok(
                     new LoginResponse(token,
-                            request.getUsername(), role));
+                            request.getUsername(),
+                            role, user.getId()));
 
         } catch(BadCredentialsException ex){
 
