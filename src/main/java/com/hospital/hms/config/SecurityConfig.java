@@ -4,6 +4,7 @@ import com.hospital.hms.security.JwtAuthenticationFilter;
 import com.hospital.hms.security.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -90,7 +91,11 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**")
                         .permitAll()
 
-                        //Only ADMIN can access doctor APIs
+                        //Authenticated users can view doctors
+                        .requestMatchers(HttpMethod.GET, "/doctors/**")
+                        .authenticated()
+
+                        //Only ADMIN can manage doctors
                         .requestMatchers("/doctors/**")
                         .hasRole("ADMIN")
 
