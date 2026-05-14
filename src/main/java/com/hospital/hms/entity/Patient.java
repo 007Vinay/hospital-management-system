@@ -3,7 +3,8 @@ package com.hospital.hms.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,10 @@ public class Patient {
     @Min(value = 0, message = "Age must be positive")
     private int age;
     private String disease;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotBlank(message = "Gender is required")
     private String gender;
@@ -83,6 +88,13 @@ public class Patient {
         this.disease = disease;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     public String getGender() {
         return gender;
     }

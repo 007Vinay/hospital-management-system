@@ -9,6 +9,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
+import com.hospital.hms.dto.RegisterRequest;
+import com.hospital.hms.entity.Patient;
+import com.hospital.hms.repository.PatientRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +38,12 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //Login API
     @PostMapping("/login")
@@ -78,5 +89,51 @@ public class AuthController {
 
             throw ex;
         }
+    }
+
+    //Register API
+    @Transactional
+    @PostMapping("/register")
+    public ResponseEntity<String> register(
+            @RequestBody RegisterRequest request) {
+
+        //Check username already exists
+        if (userRepository.findByUsername(
+                request.getUsername()).isPresent()) {
+
+            return ResponseEntity.badRequest()
+                    .body("Username already exists");
+        }
+
+        //Create user account
+        User user = new User();
+
+        user.setUsername(request.getUsername());
+
+        user.setPassword(passwordEncoder.encode(
+                        request.getPassword()));
+
+        user.setRole("PATIENT");
+
+        User savedUser = userRepository.save(user);
+
+        //Create patient profile
+        Patient patient = new Patient();
+
+        patient.setName(request.getFullName());
+
+        patient.setPhone(request.getPhone());
+
+        patient.setAge(request.getAge());
+
+        patient.setGender(request.getGender());
+
+        patient.setDisease(request.getDisease());
+
+        patient.setUser(savedUser);
+
+        patientRepository.save(patient);
+
+        return ResponseEntity.ok("Patient registered successfully");
     }
 }
