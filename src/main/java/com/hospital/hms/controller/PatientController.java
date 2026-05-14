@@ -2,11 +2,15 @@ package com.hospital.hms.controller;
 
 import com.hospital.hms.dto.PatientRequestDTO;
 import com.hospital.hms.dto.PatientResponseDTO;
+import com.hospital.hms.entity.Patient;
 import com.hospital.hms.service.PatientService;
+import com.hospital.hms.repository.PatientRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -15,6 +19,9 @@ import java.util.List;
 public class PatientController {
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     //Create Patient
     @PostMapping
@@ -57,6 +64,22 @@ public class PatientController {
                                                     String phone){
 
         return patientService.getPatientByPhone(phone);
+    }
+
+    //Get Patient by Username
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
+        String username = authentication.getName();
+
+        Optional<Patient> patient = patientRepository
+                        .findByUserUsername(username);
+
+        if (patient.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body("Patient not found");
+        }
+
+        return ResponseEntity.ok(patient.get());
     }
 
 }
