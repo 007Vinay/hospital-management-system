@@ -7,11 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import com.hospital.hms.security.CustomUserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,41 +24,17 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(
             JwtUtil jwtUtil,
-            InMemoryUserDetailsManager userDetailsService){
+            CustomUserDetailsService customUserDetailsService){
 
-        return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
+        //Create JWT filter using database-based user authentication
+        return new JwtAuthenticationFilter(jwtUtil,
+                customUserDetailsService);
     }
 
     //Password Encoder Bean
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
-    }
-
-    //In-Memory User Authentication
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(
-            PasswordEncoder passwordEncoder){
-
-        //Admin User
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(
-                        passwordEncoder.encode("admin123"))
-
-                .roles("ADMIN")
-                .build();
-
-        //Doctor User
-        UserDetails doctor = User.builder()
-                .username("doctor")
-                .password(
-                        passwordEncoder.encode("doctor123"))
-
-                .roles("DOCTOR")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, doctor);
     }
 
     //CORS Configuration
