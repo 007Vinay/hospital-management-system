@@ -1,5 +1,6 @@
 package com.hospital.hms.controller;
 
+import org.springframework.security.core.Authentication;
 import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
@@ -24,15 +25,19 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    //Create Appointment
+    //Create appointment for currently authenticated patient
     @PostMapping
     public AppointmentResponseDTO createAppointment(
-            @RequestParam @Positive Long patientId,
+            Authentication authentication,
             @RequestParam @Positive Long doctorId,
             @Valid @RequestBody AppointmentRequestDTO requestDTO){
 
-        return appointmentService.createAppointment(
-                patientId, doctorId, requestDTO);
+        //Extract username from authenticated JWT user
+        String username = authentication.getName();
+
+        //Create appointment for logged-in patient
+        return appointmentService.createAppointment(username, doctorId,
+                        requestDTO);
     }
 
     //Get All Appointments

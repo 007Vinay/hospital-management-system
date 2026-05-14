@@ -57,12 +57,16 @@ public class AppointmentService {
     }
 
     //Create new appointment for the specified patient and doctor
-    public AppointmentResponseDTO createAppointment(Long patientId,
-                                         Long doctorId,
-                                         AppointmentRequestDTO requestDTO){
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Patient not found with id: "+ patientId));
+    public AppointmentResponseDTO createAppointment(
+            String username, Long doctorId,
+            AppointmentRequestDTO requestDTO){
+
+        //Fetch authenticated patient using JWT username
+        Patient patient = patientRepository.findByUserUsername(username)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Patient not found with username: "
+                                                + username));
 
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException(
