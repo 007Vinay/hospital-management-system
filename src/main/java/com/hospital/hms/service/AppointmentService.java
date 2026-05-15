@@ -224,4 +224,36 @@ public class AppointmentService {
 
         return appointmentRepository.findByPatientUserUsername(username);
     }
+
+    //Create appointment by admin/doctor using patient ID
+    public AppointmentResponseDTO createAppointment(Long patientId,
+            Long doctorId, AppointmentRequestDTO requestDTO){
+
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Patient not found with id: " + patientId));
+
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Doctor not found with id: " + doctorId));
+
+        Appointment appointment = new Appointment();
+
+        appointment.setAppointmentDate(requestDTO.getAppointmentDate());
+
+        appointment.setStatus(requestDTO.getStatus());
+
+        appointment.setPatient(patient);
+
+        appointment.setDoctor(doctor);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        logger.info("Appointment created by admin/doctor with ID: {}",
+                savedAppointment.getId());
+
+        return mapToDTO(savedAppointment);
+    }
 }

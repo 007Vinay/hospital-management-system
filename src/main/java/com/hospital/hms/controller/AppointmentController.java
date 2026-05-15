@@ -26,7 +26,7 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     //Create appointment for currently authenticated patient
-    @PostMapping
+    @PostMapping("/book")
     public AppointmentResponseDTO createAppointment(
             Authentication authentication,
             @RequestParam @Positive Long doctorId,
@@ -144,5 +144,16 @@ public class AppointmentController {
 
         //Return appointments of authenticated patient
         return ResponseEntity.ok(appointments);
+    }
+
+    //Create appointment by admin/doctor
+    @PostMapping
+    public AppointmentResponseDTO createAppointmentByAdmin(
+            @RequestParam @Positive Long patientId,
+            @RequestParam @Positive Long doctorId,
+            @Valid @RequestBody AppointmentRequestDTO requestDTO){
+
+        return appointmentService.createAppointment(patientId,
+                doctorId, requestDTO);
     }
 }
