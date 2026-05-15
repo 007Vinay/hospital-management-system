@@ -52,6 +52,10 @@ public class AppointmentService {
                 appointment.getAppointmentDate(),
                 appointment.getStatus(),
                 appointment.getPatient().getName(),
+                appointment.getPatient().getAge(),
+                appointment.getPatient().getGender(),
+                appointment.getPatient().getDisease(),
+                appointment.getPatient().getPhone(),
                 appointment.getDoctor().getName()
         );
     }
