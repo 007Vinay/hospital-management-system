@@ -99,11 +99,15 @@ public class SecurityConfig {
                         .requestMatchers("/doctors/**")
                         .hasRole("ADMIN")
 
-                        //Authenticated users can create appointments
+                        //Authenticated users can create and view their own appointments
                          .requestMatchers(HttpMethod.POST, "/appointments/**")
                          .authenticated()
 
-                        //ADMIN and DOCTOR can manage appointments
+                         .requestMatchers(HttpMethod.GET,
+                                 "/appointments/my-appointments")
+                         .hasRole("PATIENT")
+
+                         //ADMIN and DOCTOR can manage appointments
                          .requestMatchers("/appointments/**")
                          .hasAnyRole("ADMIN", "DOCTOR")
 
