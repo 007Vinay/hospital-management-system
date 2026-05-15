@@ -1,7 +1,7 @@
 package com.hospital.hms.dto;
 
+import com.hospital.hms.entity.AppointmentStatus;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -12,14 +12,14 @@ public class AppointmentRequestDTO {
     @Future(message = "Appointment date must be in future")
     private LocalDateTime appointmentDate;
 
-    @NotBlank(message = "Status is required")
-    private String status;
+    @NotNull(message = "Status is required")
+    private AppointmentStatus status;
 
     //Constructors
     public AppointmentRequestDTO() {
     }
 
-    public AppointmentRequestDTO(LocalDateTime appointmentDate, String status) {
+    public AppointmentRequestDTO(LocalDateTime appointmentDate, AppointmentStatus status) {
         this.appointmentDate = appointmentDate;
         this.status = status;
     }
@@ -33,11 +33,11 @@ public class AppointmentRequestDTO {
         this.appointmentDate = appointmentDate;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 

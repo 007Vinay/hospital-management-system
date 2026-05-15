@@ -2,7 +2,6 @@ package com.hospital.hms.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -18,8 +17,8 @@ public class Appointment {
     @Future(message = "Appointment date must be in future")
     private LocalDateTime appointmentDate;
 
-    @NotBlank(message = "Status is required")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
@@ -34,7 +33,7 @@ public class Appointment {
     }
 
     public Appointment(LocalDateTime appointmentDate,
-                       String status,
+                       AppointmentStatus status,
                        Patient patient,
                        Doctor doctor) {
 
@@ -61,11 +60,11 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 

@@ -3,6 +3,7 @@ package com.hospital.hms.service;
 import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
+import com.hospital.hms.entity.AppointmentStatus;
 import com.hospital.hms.entity.Doctor;
 import com.hospital.hms.entity.Patient;
 import com.hospital.hms.exception.ResourceNotFoundException;
@@ -150,7 +151,7 @@ public class AppointmentService {
     }
 
     //Retrieves appointments by status
-    public List<AppointmentResponseDTO> getAppointmentByStatus(String status){
+    public List<AppointmentResponseDTO> getAppointmentByStatus(AppointmentStatus status){
 
         List<Appointment> appointments =
                 appointmentRepository.findByStatus(status);
@@ -203,7 +204,7 @@ public class AppointmentService {
     }
 
     // Handles filtered appointment search with pageable response and DTO mapping
-    public Page<AppointmentResponseDTO> searchAppointments(String status, Long doctorId,
+    public Page<AppointmentResponseDTO> searchAppointments(AppointmentStatus status, Long doctorId,
                                                            Long patientId, int page, int size, String sortBy){
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -255,5 +256,20 @@ public class AppointmentService {
                 savedAppointment.getId());
 
         return mapToDTO(savedAppointment);
+    }
+
+    //Update appointment status
+    public AppointmentResponseDTO updateAppointmentStatus(Long id, AppointmentStatus status){
+
+        Appointment appointment = getAppointmentEntityById(id);
+
+        appointment.setStatus(status);
+
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+        logger.info("Appointment status updated to {} for appointment ID: {}",
+                status, id);
+
+        return mapToDTO(updatedAppointment);
     }
 }

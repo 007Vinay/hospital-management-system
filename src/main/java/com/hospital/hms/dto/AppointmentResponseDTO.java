@@ -1,12 +1,14 @@
 package com.hospital.hms.dto;
 
+import com.hospital.hms.entity.AppointmentStatus;
+
 import java.time.LocalDateTime;
 
 public class AppointmentResponseDTO {
 
     private Long id;
     private LocalDateTime appointmentDate;
-    private String status;
+    private AppointmentStatus status;
     private String patientName;
     private Integer patientAge;
     private String patientGender;
@@ -20,7 +22,7 @@ public class AppointmentResponseDTO {
 
     public AppointmentResponseDTO(
             Long id, LocalDateTime appointmentDate,
-            String status, String patientName,
+            AppointmentStatus status, String patientName,
             Integer patientAge, String patientGender,
             String patientDisease, String patientPhone,
             String doctorName) {
@@ -53,11 +55,11 @@ public class AppointmentResponseDTO {
         this.appointmentDate = appointmentDate;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 

@@ -1,11 +1,11 @@
 package com.hospital.hms.controller;
 
+import com.hospital.hms.entity.AppointmentStatus;
 import org.springframework.security.core.Authentication;
 import com.hospital.hms.dto.AppointmentRequestDTO;
 import com.hospital.hms.dto.AppointmentResponseDTO;
 import com.hospital.hms.entity.Appointment;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import com.hospital.hms.service.AppointmentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -75,8 +75,8 @@ public class AppointmentController {
 
     //Get (Fetch) by status
     @GetMapping("/status/{status}")
-    public List<AppointmentResponseDTO> getAppointmentsByStatus(@PathVariable
-                                                                String status){
+    public List<AppointmentResponseDTO> getAppointmentsByStatus(
+            @PathVariable AppointmentStatus status){
 
         return appointmentService.getAppointmentByStatus(status);
     }
@@ -110,7 +110,7 @@ public class AppointmentController {
     @GetMapping("/search")
     public Page<AppointmentResponseDTO> searchAppointments(
             @RequestParam(required = false)
-            String status,
+            AppointmentStatus status,
 
             @RequestParam(required = false)
             Long doctorId,
@@ -155,5 +155,14 @@ public class AppointmentController {
 
         return appointmentService.createAppointment(patientId,
                 doctorId, requestDTO);
+    }
+
+    //Update appointment status
+    @PatchMapping("/{id}/status")
+    public AppointmentResponseDTO updateAppointmentStatus(
+            @PathVariable Long id,
+            @RequestParam AppointmentStatus status){
+
+        return appointmentService.updateAppointmentStatus(id, status);
     }
 }

@@ -1,6 +1,7 @@
 package com.hospital.hms.repository;
 
 import com.hospital.hms.entity.Appointment;
+import com.hospital.hms.entity.AppointmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-    List<Appointment> findByStatus(String status);
+    List<Appointment> findByStatus(AppointmentStatus status);
     List<Appointment> findByDoctorId(Long doctorId);
     List<Appointment> findByPatientId(Long patientId);
     List<Appointment> findByPatientUserUsername(String username);
@@ -45,7 +46,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             """)
     Page<Appointment> searchAppointments(
             @Param("status")
-            String status,
+            AppointmentStatus status,
 
             @Param("doctorId")
             Long doctorId,
