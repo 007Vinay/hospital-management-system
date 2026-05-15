@@ -99,9 +99,13 @@ public class SecurityConfig {
                         .requestMatchers("/doctors/**")
                         .hasRole("ADMIN")
 
-                        //ADMIN and DOCTOR both can access appointments
-                        .requestMatchers("/appointments/**")
-                        .hasAnyRole("ADMIN", "DOCTOR")
+                        //Authenticated users can create appointments
+                         .requestMatchers(HttpMethod.POST, "/appointments/**")
+                         .authenticated()
+
+                        //ADMIN and DOCTOR can manage appointments
+                         .requestMatchers("/appointments/**")
+                         .hasAnyRole("ADMIN", "DOCTOR")
 
                         //Any authenticated user can access patients
                         .requestMatchers("/patients/**")
